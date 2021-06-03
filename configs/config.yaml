@@ -1,0 +1,11 @@
+grpc:
+  # gRPC server ports
+  grpcServerPort: "8080"
+  # gRPC gateway port
+  grpcGatewayPort: "8081"
+
+prometheus:
+  # Prometheus path
+  prometheusPath: "/metrics"
+  # Prometheus port
+  prometheusPort: "9000"

@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package helloworld;
+
+import "google/api/annotations.proto";
+
+// Defines the import path that should be used to import the generated package
+// and the package name
+
+// Helloworld Service
+service HelloWorldService {
+    // Sends a greeting
+    rpc SayHello(SayHelloRequest) returns (SayHelloResponse) {
+        option (google.api.http) = {
+            post: "/v1/helloworld"
+            body: "*"
+        };
+    }
+}
+
+// The request of SayHello api
+message SayHelloRequest {
+    string message = 1;
+}
+
+// The response of SayHello api
+message SayHelloResponse {
+    string message = 1;
+}
