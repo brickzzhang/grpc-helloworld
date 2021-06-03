@@ -1,3 +1,4 @@
+// Package logger provides log package
 package logger
 
 import (
@@ -9,6 +10,7 @@ import (
 
 type logType string
 
+// Logger interface for different levels of log
 type Logger interface {
 	Info(msg string, fields ...zap.Field)
 	Warn(msg string, fields ...zap.Field)
@@ -52,6 +54,7 @@ func getDefaultZapLogger() *zap.Logger {
 	return zapLogger
 }
 
+// NewLoggerToCtx insert logger to context
 func NewLoggerToCtx(ctx context.Context, log Logger) context.Context {
 	if log == nil {
 		return context.WithValue(ctx, logType("logger"), getDefaultZapLogger())

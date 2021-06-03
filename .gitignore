@@ -3,4 +3,3 @@
 /apigen/
 *.bin
 *.pb.*go
-/vendor/

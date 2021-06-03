@@ -1,0 +1,29 @@
+#!/bin/bash
+
+make lint
+if [ $? -ne 0 ]; then
+    printf "COMMIT FAILED: lint error\n"
+    exit 1
+fi
+
+make fmt
+if [ $? -ne 0 ]; then
+    printf "COMMIT FAILED: fmt error\n"
+    exit 1
+fi
+
+diff=$(git diff --name-only internal/)
+if [ "$diff" != "" ]; then
+    printf "There are codes updated when checking, 'git add' it first.\n"
+    printf "COMMIT FAILED\n"
+    exit 1
+fi
+
+make binary
+if [ $? -ne 0 ]; then
+    printf "COMMIT FAILED: go build error\n"
+    exit 1
+fi
+
+printf "COMMIT READY\n"
+exit 0

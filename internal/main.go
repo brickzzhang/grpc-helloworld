@@ -15,7 +15,7 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 
-	. "github.com/brickzzhang/grpc-helloworld/api"
+	api "github.com/brickzzhang/grpc-helloworld/api"
 	"github.com/brickzzhang/grpc-helloworld/internal/service"
 	"github.com/brickzzhang/grpc-helloworld/workshop/configger"
 	"github.com/brickzzhang/grpc-helloworld/workshop/logger"
@@ -31,7 +31,7 @@ func registerGRPCRegFunc(server *grpc.Server, funcs ...GRPCRegFunc) {
 }
 
 func registerHelloWorldService(server *grpc.Server) {
-	RegisterHelloWorldServiceServer(server, service.NewHelloWorldService())
+	api.RegisterHelloWorldServiceServer(server, service.NewHelloWorldService())
 }
 
 // GatewayRegFunc Used while registering protoc generated gRPC gateway registration function
@@ -53,7 +53,7 @@ func registerHelloWorldServiceGateway(ctx context.Context, mux *runtime.ServeMux
 	port := cfg.Get("grpc.grpcServerPort")
 
 	opts := []grpc.DialOption{grpc.WithInsecure()}
-	return RegisterHelloWorldServiceHandlerFromEndpoint(ctx, mux, fmt.Sprintf("localhost:%s", port), opts)
+	return api.RegisterHelloWorldServiceHandlerFromEndpoint(ctx, mux, fmt.Sprintf("localhost:%s", port), opts)
 }
 
 func startServer(ctx context.Context) (err error) {
@@ -63,7 +63,7 @@ func startServer(ctx context.Context) (err error) {
 	// Create a listener on TCP port
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", port.(string)))
 	if err != nil {
-		return fmt.Errorf("Failed to listen: %+v", err)
+		return fmt.Errorf("failed to listen: %+v", err)
 	}
 
 	// Create a gRPC server object

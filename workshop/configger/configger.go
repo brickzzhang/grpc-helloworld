@@ -1,3 +1,4 @@
+// Package configger provides config file method
 package configger
 
 import (
@@ -12,8 +13,8 @@ import (
 type configType string
 
 const (
-	Config         string = "config"
-	ConfigFileType string = "yaml"
+	config         string = "config"
+	configFileType string = "yaml"
 )
 
 func initFlags() (configMap map[string]interface{}) {
@@ -21,14 +22,14 @@ func initFlags() (configMap map[string]interface{}) {
 	conf := flag.String("f", "configs/config.yaml", "config file path")
 
 	flag.Parse()
-	configMap[Config] = *conf
+	configMap[config] = *conf
 
 	return
 }
 
 func configParse() (cfg *viper.Viper, err error) {
 	configMap := initFlags()
-	v, ok := configMap[Config].(string)
+	v, ok := configMap[config].(string)
 	if !ok {
 		err = fmt.Errorf("invalid config type")
 		return
@@ -42,7 +43,7 @@ func configParse() (cfg *viper.Viper, err error) {
 
 	config.AddConfigPath(path)
 	config.SetConfigName(file)
-	config.SetConfigType(ConfigFileType)
+	config.SetConfigType(configFileType)
 
 	if err = config.ReadInConfig(); err != nil {
 		return nil, err
@@ -51,6 +52,7 @@ func configParse() (cfg *viper.Viper, err error) {
 	return config, nil
 }
 
+// NewConfiggerToCtx insert configger to context
 func NewConfiggerToCtx(ctx context.Context) (context.Context, error) {
 	v, err := configParse()
 	if err != nil {
@@ -60,6 +62,7 @@ func NewConfiggerToCtx(ctx context.Context) (context.Context, error) {
 	return context.WithValue(ctx, configType("config"), v), nil
 }
 
+// ExtractConfiggerFromCtx extract configger from context
 func ExtractConfiggerFromCtx(ctx context.Context) *viper.Viper {
 	v, ok := ctx.Value(configType("config")).(*viper.Viper)
 	if !ok {

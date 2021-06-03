@@ -1,20 +1,25 @@
+// Package service provide helloworld service
 package service
 
 import (
 	"context"
 
-	. "github.com/brickzzhang/grpc-helloworld/api"
+	api "github.com/brickzzhang/grpc-helloworld/api"
 )
 
+// HelloWorldService helloworld service
 type HelloWorldService struct {
-	UnimplementedHelloWorldServiceServer
+	api.UnimplementedHelloWorldServiceServer
 }
 
+// NewHelloWorldService new helloworld service
 func NewHelloWorldService() *HelloWorldService {
 	service := &HelloWorldService{}
 	return service
 }
 
-func (service *HelloWorldService) SayHello(ctx context.Context, request *SayHelloRequest) (*SayHelloResponse, error) {
-	return &SayHelloResponse{Message: request.Message}, nil
+// SayHello echo nil
+func (service *HelloWorldService) SayHello(
+	ctx context.Context, request *api.SayHelloRequest) (*api.SayHelloResponse, error) {
+	return &api.SayHelloResponse{Message: request.Message}, nil
 }
