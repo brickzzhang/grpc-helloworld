@@ -9,3 +9,10 @@ prometheus:
   prometheusPath: "/metrics"
   # Prometheus port
   prometheusPort: "9000"
+
+swagger:
+  swaggerEnabled: true
+  # Swagger web port
+  swaggerWebPort: "8082"
+  # Swagger web path
+  swaggerWebPath: "/sw/"

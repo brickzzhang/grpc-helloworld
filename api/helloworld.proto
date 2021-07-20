@@ -4,12 +4,11 @@ package helloworld;
 
 import "google/api/annotations.proto";
 
-// Defines the import path that should be used to import the generated package
-// and the package name
+option go_package = "github.com/brickzzhang/grpc-helloworld/apigen/hello;hello";
 
-// Helloworld Service
+// HelloWorldService a hello world demo
 service HelloWorldService {
-    // Sends a greeting
+    // SayHello Sends a greeting
     rpc SayHello(SayHelloRequest) returns (SayHelloResponse) {
         option (google.api.http) = {
             post: "/v1/helloworld"
@@ -18,12 +17,14 @@ service HelloWorldService {
     }
 }
 
-// The request of SayHello api
+// SayHelloRequest The request of SayHello api
 message SayHelloRequest {
+    // message greeting message
     string message = 1;
 }
 
-// The response of SayHello api
+// SayHelloResponse The response of SayHello api
 message SayHelloResponse {
+    // message greeting message
     string message = 1;
 }

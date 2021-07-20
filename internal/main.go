@@ -10,15 +10,22 @@ import (
 	"syscall"
 
 	"github.com/gorilla/mux"
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
+	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
+	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
+	grpc_opentracing "github.com/grpc-ecosystem/go-grpc-middleware/tracing/opentracing"
+	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 
-	api "github.com/brickzzhang/grpc-helloworld/api"
+	hello "github.com/brickzzhang/grpc-helloworld/apigen/hello"
 	"github.com/brickzzhang/grpc-helloworld/internal/service"
 	"github.com/brickzzhang/grpc-helloworld/workshop/configger"
 	"github.com/brickzzhang/grpc-helloworld/workshop/logger"
+	"github.com/brickzzhang/grpc-helloworld/workshop/swagger"
 )
 
 // GRPCRegFunc Used while registering protoc generated gRPC registration function
@@ -31,7 +38,7 @@ func registerGRPCRegFunc(server *grpc.Server, funcs ...GRPCRegFunc) {
 }
 
 func registerHelloWorldService(server *grpc.Server) {
-	api.RegisterHelloWorldServiceServer(server, service.NewHelloWorldService())
+	hello.RegisterHelloWorldServiceServer(server, service.NewHelloWorldService())
 }
 
 // GatewayRegFunc Used while registering protoc generated gRPC gateway registration function
@@ -53,7 +60,7 @@ func registerHelloWorldServiceGateway(ctx context.Context, mux *runtime.ServeMux
 	port := cfg.Get("grpc.grpcServerPort")
 
 	opts := []grpc.DialOption{grpc.WithInsecure()}
-	return api.RegisterHelloWorldServiceHandlerFromEndpoint(ctx, mux, fmt.Sprintf("localhost:%s", port), opts)
+	return hello.RegisterHelloWorldServiceHandlerFromEndpoint(ctx, mux, fmt.Sprintf("localhost:%s", port), opts)
 }
 
 func startServer(ctx context.Context) (err error) {
@@ -66,8 +73,27 @@ func startServer(ctx context.Context) (err error) {
 		return fmt.Errorf("failed to listen: %+v", err)
 	}
 
+	// log grpc library internals
+	// grpc_zap.ReplaceGrpcLogger(logger.GetDefaultZapLogger())
+
+	// log payloads for all requests and responses
+	alwaysLoggingDeciderServer := func(ctx context.Context, fullMethodName string, servingObject interface{}) bool {
+		return true
+	}
+
 	// Create a gRPC server object
-	s := grpc.NewServer()
+	s := grpc.NewServer(
+		grpc.UnaryInterceptor(
+			grpc_middleware.ChainUnaryServer(
+				grpc_recovery.UnaryServerInterceptor(),
+				grpc_ctxtags.UnaryServerInterceptor(grpc_ctxtags.WithFieldExtractor(grpc_ctxtags.CodeGenRequestFieldExtractor)),
+				grpc_zap.UnaryServerInterceptor(logger.GetDefaultZapLogger()),
+				grpc_zap.PayloadUnaryServerInterceptor(logger.GetDefaultZapLogger(), alwaysLoggingDeciderServer),
+				grpc_opentracing.UnaryServerInterceptor(),
+				grpc_prometheus.UnaryServerInterceptor,
+			),
+		),
+	)
 	// register grpc service to server
 	registerGRPCRegFunc(s,
 		registerHelloWorldService,
@@ -118,6 +144,40 @@ func startProm(ctx context.Context) (err error) {
 	return
 }
 
+func startSwagger(ctx context.Context) (err error) {
+	cfg := configger.ExtractConfiggerFromCtx(ctx)
+	port := cfg.Get("swagger.swaggerWebPort")
+	grpcGwPort := cfg.Get("grpc.grpcGatewayPort")
+	// assign the web route
+	value, ok := cfg.Get("swagger.swaggerWebPath").(string)
+	if !ok {
+		return fmt.Errorf("assert error: %+v", value)
+	}
+	swagger.SwWebRoute = value
+	enabled, ok := cfg.Get("swagger.swaggerEnabled").(bool)
+	if !ok {
+		return fmt.Errorf("assert error: %+v", enabled)
+	}
+	if !enabled {
+		return nil
+	}
+
+	mux := http.NewServeMux()
+	// http://localhost:8082/sw handler
+	mux.Handle(swagger.SwWebRoute, http.StripPrefix(swagger.SwWebRoute, swagger.WebHandler()))
+	// http://localhost:8082/swagger/swagger/application/v1/application_service.swagger.json handler
+	mux.HandleFunc(swagger.SwJSONRoute, swagger.WebJSONHandler)
+	// http://localhost:8092/v1/helloworld handler
+	mux.Handle(swagger.SwaggerGatewayRoute, swagger.Forward2GprcGatewayHandler(grpcGwPort.(string)))
+
+	// Serve swagger server
+	logger.Info(ctx, fmt.Sprintf("swagger on localhost:%s%s", port.(string), swagger.SwWebRoute))
+	go func() {
+		err = http.ListenAndServe(fmt.Sprintf(":%s", port.(string)), mux)
+	}()
+	return
+}
+
 func quitter(ctx context.Context) {
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs,
@@ -154,6 +214,11 @@ func main() {
 	if err := startGateway(ctx); err != nil {
 		logger.Error(ctx, "start gateway error", zap.Error(err))
 		os.Exit(1)
+	}
+
+	// start swagger, error doesn't matter
+	if err := startSwagger(ctx); err != nil {
+		logger.Error(ctx, "start swagger error", zap.Error(err))
 	}
 
 	// start prometheus

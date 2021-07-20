@@ -2,4 +2,9 @@
 !/bin/.keep
 /apigen/
 *.bin
-*.pb.*go
+/api/swagger
+/assets/swagger-ui/
+*/.DS_Store
+*.pb.go
+*.pb.gw.go
+*.pb.validate.go

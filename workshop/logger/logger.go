@@ -45,8 +45,8 @@ func defaultZapConfig() zap.Config {
 	}
 }
 
-// Get default zap logger with json format
-func getDefaultZapLogger() *zap.Logger {
+// GetDefaultZapLogger Get default zap logger with json format
+func GetDefaultZapLogger() *zap.Logger {
 	zapLogger, err := defaultZapConfig().Build()
 	if err != nil {
 		return zap.NewExample()
@@ -57,7 +57,7 @@ func getDefaultZapLogger() *zap.Logger {
 // NewLoggerToCtx insert logger to context
 func NewLoggerToCtx(ctx context.Context, log Logger) context.Context {
 	if log == nil {
-		return context.WithValue(ctx, logType("logger"), getDefaultZapLogger())
+		return context.WithValue(ctx, logType("logger"), GetDefaultZapLogger())
 	}
 
 	return context.WithValue(ctx, logType("logger"), log)

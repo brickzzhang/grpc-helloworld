@@ -4,12 +4,12 @@ package service
 import (
 	"context"
 
-	api "github.com/brickzzhang/grpc-helloworld/api"
+	"github.com/brickzzhang/grpc-helloworld/apigen/hello"
 )
 
 // HelloWorldService helloworld service
 type HelloWorldService struct {
-	api.UnimplementedHelloWorldServiceServer
+	hello.UnimplementedHelloWorldServiceServer
 }
 
 // NewHelloWorldService new helloworld service
@@ -20,6 +20,6 @@ func NewHelloWorldService() *HelloWorldService {
 
 // SayHello echo nil
 func (service *HelloWorldService) SayHello(
-	ctx context.Context, request *api.SayHelloRequest) (*api.SayHelloResponse, error) {
-	return &api.SayHelloResponse{Message: request.Message}, nil
+	ctx context.Context, request *hello.SayHelloRequest) (*hello.SayHelloResponse, error) {
+	return &hello.SayHelloResponse{Message: request.Message}, nil
 }

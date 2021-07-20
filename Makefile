@@ -6,7 +6,17 @@ GLINT=$(shell command -v golangci-lint 2>/dev/null)
 ###############################################################################
 .PHONY: pb
 pb:
-	@bash ./build/pb_generate.sh -e project
+# NOTICE: Needed to be modified (such as api/services), otherwise it will use `api` path by default
+	@bash ./build/pb_generate.sh -e project -p api
+
+.PHONY: lc-pb
+lc-pb:
+# NOTICE: Needed to be modified (such as api/services), otherwise it will use `api` path by default
+	@bash ./build/pb_generate.sh -e local -p api
+
+###############################################################################
+#                            Formation targets                                #
+###############################################################################
 
 .PHONY: lint
 lint:
@@ -40,3 +50,21 @@ git-hooks: tools
 	@echo "Copy git hooks"
 	@find .git/hooks -type l -exec rm {} \;
 	@find .githooks -type f -exec ln -sf ../../{} .git/hooks/ \;
+
+###############################################################################
+#                            CICD targets                                     #
+###############################################################################
+
+.PHONY: build
+build: pb
+	@go mod vendor
+	@go build -o boot.bin internal/main.go
+
+.PHONY: lc-build
+lc-build: lc-pb
+	@go mod vendor
+	@go build -o boot.bin internal/main.go
+
+.PHONY: run
+run:
+	./boot.bin -f configs/config.yaml

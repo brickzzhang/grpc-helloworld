@@ -40,14 +40,14 @@ if [[ -n "${build_env}" && "${build_env}" != "local" && "${build_env}" != "proje
     exit 1
 fi
 
-go_install gocov github.com/axw/gocov/gocov@latest
-go_install protoc-gen-validate github.com/envoyproxy/protoc-gen-validate@latest
-go_install swagger github.com/go-swagger/go-swagger/cmd/swagger@latest
-go_install mockgen github.com/golang/mock/mockgen@latest
-go_install golangci-lint github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-go_install protoc-gen-grpc-gateway github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway@latest
-go_install protoc-gen-openapiv2 github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@latest
-go_install protoc-gen-doc github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@latest
-go_install goimports golang.org/x/tools/cmd/goimports@latest
-go_install protoc-gen-go-grpc google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+go_install gocov github.com/axw/gocov/gocov@v1.0.0
+go_install protoc-gen-validate github.com/envoyproxy/protoc-gen-validate@v0.6.1
+go_install swagger github.com/go-swagger/go-swagger/cmd/swagger@v0.27.0
+go_install mockgen github.com/golang/mock/mockgen@v1.6.0
+go_install golangci-lint github.com/golangci/golangci-lint/cmd/golangci-lint@v1.41.1
+go_install protoc-gen-grpc-gateway github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway@v1.16.0
+go_install protoc-gen-openapiv2 github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.3.0
+go_install protoc-gen-doc github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@v1.4.1
+go_install goimports golang.org/x/tools/cmd/goimports@v0.1.5
+go_install protoc-gen-go-grpc google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1.0
 go_install protoc-gen-go github.com/golang/protobuf/protoc-gen-go@v1.4.0
