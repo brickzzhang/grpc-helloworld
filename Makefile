@@ -68,3 +68,19 @@ lc-build: lc-pb
 .PHONY: run
 run:
 	./boot.bin -f configs/config.yaml
+
+###############################################################################
+#                            client targets                                   #
+###############################################################################
+
+.PHONY: cli-build
+cli-build: pb
+	@cd client && go build -o client.bin -mod=vendor ./
+
+.PHONY: lc-cli-build
+lc-cli-build: lc-pb
+	@cd client && go build -o client.bin -mod=vendor ./
+
+.PHONY: cli-run
+cli-run:
+	client/client.bin -f configs/config.yaml

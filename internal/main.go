@@ -86,11 +86,29 @@ func startServer(ctx context.Context) (err error) {
 		grpc.UnaryInterceptor(
 			grpc_middleware.ChainUnaryServer(
 				grpc_recovery.UnaryServerInterceptor(),
-				grpc_ctxtags.UnaryServerInterceptor(grpc_ctxtags.WithFieldExtractor(grpc_ctxtags.CodeGenRequestFieldExtractor)),
+				grpc_ctxtags.UnaryServerInterceptor(
+					grpc_ctxtags.WithFieldExtractor(grpc_ctxtags.CodeGenRequestFieldExtractor),
+				),
 				grpc_zap.UnaryServerInterceptor(logger.GetDefaultZapLogger()),
-				grpc_zap.PayloadUnaryServerInterceptor(logger.GetDefaultZapLogger(), alwaysLoggingDeciderServer),
+				grpc_zap.PayloadUnaryServerInterceptor(
+					logger.GetDefaultZapLogger(), alwaysLoggingDeciderServer,
+				),
 				grpc_opentracing.UnaryServerInterceptor(),
 				grpc_prometheus.UnaryServerInterceptor,
+			),
+		),
+		grpc.StreamInterceptor(
+			grpc_middleware.ChainStreamServer(
+				grpc_recovery.StreamServerInterceptor(),
+				grpc_ctxtags.StreamServerInterceptor(
+					grpc_ctxtags.WithFieldExtractor(grpc_ctxtags.CodeGenRequestFieldExtractor),
+				),
+				grpc_zap.StreamServerInterceptor(logger.GetDefaultZapLogger()),
+				grpc_zap.PayloadStreamServerInterceptor(
+					logger.GetDefaultZapLogger(), alwaysLoggingDeciderServer,
+				),
+				grpc_opentracing.StreamServerInterceptor(),
+				grpc_prometheus.StreamServerInterceptor,
 			),
 		),
 	)

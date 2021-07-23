@@ -15,6 +15,33 @@ service HelloWorldService {
             body: "*"
         };
     }
+
+    // HelloChatter response to client continuously
+    rpc HelloChatter(HelloChatterRequest)
+        returns (stream HelloChatterResponse) {
+        option (google.api.http) = {
+            post: "/v1/helloworld:hello_chatter"
+            body: "*"
+        };
+    }
+
+    // Chatter2Hello request continuously
+    rpc Chatter2Hello(stream Chatter2HelloRequest)
+        returns (Chatter2HelloResponse) {
+        option (google.api.http) = {
+            post: "/v1/helloworld:chatter_talk"
+            body: "*"
+        };
+    }
+
+    // Chatter2Chatter request continuously
+    rpc Chatter2Chatter(stream Chatter2ChatterRequest)
+        returns (stream Chatter2ChatterResponse) {
+        option (google.api.http) = {
+            post: "/v1/helloworld:chatter_chatter"
+            body: "*"
+        };
+    }
 }
 
 // SayHelloRequest The request of SayHello api
@@ -27,4 +54,48 @@ message SayHelloRequest {
 message SayHelloResponse {
     // message greeting message
     string message = 1;
+}
+
+// HelloChatterRequest trigger chat channel
+message HelloChatterRequest {
+    // message anything is ok
+    string message = 1;
+}
+
+// HelloChatterResponse response message
+message HelloChatterResponse {
+    // seq number
+    int32 seq = 1;
+    // message response message
+    string message = 2;
+}
+
+// Chatter2HelloRequest request message
+message Chatter2HelloRequest {
+    // seq number
+    int32 seq = 1;
+    // message request message
+    string message = 2;
+}
+
+// Chatter2HelloResponse request message
+message Chatter2HelloResponse {
+    // total segment received
+    int32 total = 1;
+}
+
+// Chatter2ChatterRequest request message
+message Chatter2ChatterRequest {
+    // seq number
+    int32 seq = 1;
+    // message request message
+    string message = 2;
+}
+
+// Chatter2ChatterResponse response message
+message Chatter2ChatterResponse {
+    // seq number
+    int32 seq = 1;
+    // message response message
+    string message = 2;
 }

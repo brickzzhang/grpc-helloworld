@@ -2,26 +2,42 @@
 
 ## What's it for this project ?
 
-This project is a helloworld demo using grpc framework. Only basic grpc unary direction flow is supported now, advanced using of stream grpc will be added later.
+This project is a helloworld demo using grpc framework.
 
 ## How to run this project ?
 
 1; generate grpc proto and gateway codes:
 
+- using project binary executables:
+
 ```bash
 make pb
 ```
 
-2; build binary file:
+- using executables on local machine:
 
 ```bash
-go build -o boot.bin internal/main.go
+make lc-pb
+```
+
+2; build binary file:
+
+- using project binary executables:
+
+```bash
+make build
+```
+
+- using executables on local machine:
+
+```bash
+make lc-build
 ```
 
 3; start grpc server:
 
 ```bash
-./boot.bin -f configs/config.yaml
+make run
 ```
 
 ## Features used from grpc-ecosystem etc
@@ -32,6 +48,8 @@ go build -o boot.bin internal/main.go
 
 - trace support
 
-## what will be next ?
+- unary, serer-side stream, client-side stream and bidirectional stream support
 
-1. grpc stream support
+## what's next ?
+
+1. graceful shutdown
