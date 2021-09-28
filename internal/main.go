@@ -24,6 +24,7 @@ import (
 	hello "github.com/brickzzhang/grpc-helloworld/apigen/hello"
 	"github.com/brickzzhang/grpc-helloworld/internal/service"
 	"github.com/brickzzhang/grpc-helloworld/workshop/configger"
+	"github.com/brickzzhang/grpc-helloworld/workshop/interceptor"
 	"github.com/brickzzhang/grpc-helloworld/workshop/logger"
 	"github.com/brickzzhang/grpc-helloworld/workshop/swagger"
 )
@@ -95,6 +96,7 @@ func startServer(ctx context.Context) (err error) {
 				),
 				grpc_opentracing.UnaryServerInterceptor(),
 				grpc_prometheus.UnaryServerInterceptor,
+				interceptor.UnaryServerInterceptor(),
 			),
 		),
 		grpc.StreamInterceptor(

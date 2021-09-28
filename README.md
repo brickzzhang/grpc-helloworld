@@ -46,9 +46,11 @@ make run
 
 - extra grpc tags.
 
-- trace support
+- trace support.
 
-- unary, serer-side stream, client-side stream and bidirectional stream support
+- unary, serer-side stream, client-side stream and bidirectional stream support.
+
+- example of customized interceptor for unary server support.
 
 ## what's next ?
 

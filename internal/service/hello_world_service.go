@@ -10,6 +10,8 @@ import (
 	"time"
 
 	"github.com/brickzzhang/grpc-helloworld/apigen/hello"
+
+	"github.com/brickzzhang/grpc-helloworld/workshop/interceptor"
 )
 
 // HelloWorldService helloworld service
@@ -27,6 +29,9 @@ func NewHelloWorldService() *HelloWorldService {
 func (s *HelloWorldService) SayHello(
 	ctx context.Context, r *hello.SayHelloRequest,
 ) (*hello.SayHelloResponse, error) {
+	if v, ok := interceptor.ExtractMetadata(ctx, interceptor.NewKey); ok {
+		log.Printf("value injected into the header: %+v", v)
+	}
 	return &hello.SayHelloResponse{Message: r.Message}, nil
 }
 
