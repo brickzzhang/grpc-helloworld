@@ -52,6 +52,8 @@ make run
 
 - example of customized interceptor for unary server support.
 
+- example of customized gRPC response handler.
+
 ## what's next ?
 
 1. graceful shutdown
