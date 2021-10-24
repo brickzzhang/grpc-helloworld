@@ -24,6 +24,7 @@ import (
 	hello "github.com/brickzzhang/grpc-helloworld/apigen/hello"
 	"github.com/brickzzhang/grpc-helloworld/internal/service"
 	"github.com/brickzzhang/grpc-helloworld/workshop/configger"
+	"github.com/brickzzhang/grpc-helloworld/workshop/handler"
 	"github.com/brickzzhang/grpc-helloworld/workshop/interceptor"
 	"github.com/brickzzhang/grpc-helloworld/workshop/logger"
 	"github.com/brickzzhang/grpc-helloworld/workshop/swagger"
@@ -132,7 +133,10 @@ func startGateway(ctx context.Context) (err error) {
 	cfg := configger.ExtractConfiggerFromCtx(ctx)
 	port := cfg.Get("grpc.grpcGatewayPort")
 
-	mux := runtime.NewServeMux()
+	mux := runtime.NewServeMux(
+		runtime.WithForwardResponseOption(handler.HTTPSuccHandler),
+		runtime.WithProtoErrorHandler(handler.HTTPErrorHandler),
+	)
 	err = registerGatewayRegFunc(ctx, mux,
 		registerHelloWorldServiceGateway,
 	)

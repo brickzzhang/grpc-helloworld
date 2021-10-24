@@ -40,6 +40,8 @@ func UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 			var value []string
 			if v, ok := md[string(OldKey)]; ok {
 				value = v
+			} else {
+				return handler(ctx, req)
 			}
 			md1 := metadata.Pairs(string(NewKey), value[0])
 			md2 := metadata.Join(md, md1)
