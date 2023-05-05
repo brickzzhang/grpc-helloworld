@@ -1,7 +1,10 @@
 #!/bin/bash
 set -e # script terminates when error occurs
 
-BASE_PATH=$(cd "$(dirname "$0")" || exit;pwd)
+BASE_PATH=$(
+    cd "$(dirname "$0")" || exit
+    pwd
+)
 CODE_PATH=${BASE_PATH}/..
 cd "${CODE_PATH}/bin"
 
@@ -10,13 +13,12 @@ PROTOC_VERSION="3.15.6"
 Kernel=$(uname -s)
 Architecture=$(uname -m)
 
-while getopts "e:" arg
-do
+while getopts "e:" arg; do
     # shellcheck disable=SC2220
     case ${arg} in
-        e)
-            build_env=${OPTARG}
-            ;;
+    e)
+        build_env=${OPTARG}
+        ;;
     esac
 done
 
@@ -35,7 +37,7 @@ if [[ ! -e $(command -v "${INSTALL_LOC}protoc") ]]; then
     else
         echo "    [Install protoc to ${INSTALL_LOC}]"
     fi
-    if [[  ${Kernel} == "Darwin" ]]; then
+    if [[ ${Kernel} == "Darwin" ]]; then
         os_info="osx"
     elif [[ ${Kernel} == "Linux" ]]; then
         os_info="linux"

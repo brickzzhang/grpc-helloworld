@@ -34,7 +34,7 @@ func WebHandler() http.Handler {
 	return http.FileServer(http.Dir(defaultSwaggerAssetsUIPath))
 }
 
-//Forward2GprcGatewayHandler used by http://localhost:8082/ route
+// Forward2GprcGatewayHandler used by http://localhost:8082/ route
 func Forward2GprcGatewayHandler(grpcGwPort string) http.Handler {
 	var rp *httputil.ReverseProxy
 	u, _ := url.Parse(fmt.Sprintf("http://localhost:%s", grpcGwPort))

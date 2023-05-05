@@ -43,13 +43,13 @@ function proto_generation() {
         protoc -I. -I api -I "${GOOGLE_PB_PKG_PATH}/googleapis" -I api/third_party --openapiv2_out=logtostderr=true:. --openapiv2_opt=json_names_for_fields=false $1
     else
         echo "    [1/4] Generate service code from proto file at $1 ..."
-        "${BIN_DIR}/protoc" -I. -I api -I "${GOOGLE_PB_PKG_PATH}/googleapis" -I api/third_party --plugin=protoc-gen-go="${BIN_DIR}/protoc-gen-go" --plugin=protoc-gen-go-grpc="${BIN_DIR}/protoc-gen-go-grpc" --go_out=. --go-grpc_out=. $1
+        "protoc" -I. -I api -I "${GOOGLE_PB_PKG_PATH}/googleapis" -I api/third_party --plugin=protoc-gen-go="${BIN_DIR}/protoc-gen-go" --plugin=protoc-gen-go-grpc="${BIN_DIR}/protoc-gen-go-grpc" --go_out=. --go-grpc_out=. $1
         echo "    [2/4] Generate reverse proxy from proto file at $1 ..."
-        "${BIN_DIR}/protoc" -I. -I api -I "${GOOGLE_PB_PKG_PATH}/googleapis" -I api/third_party --plugin=protoc-gen-grpc-gateway="${BIN_DIR}/protoc-gen-grpc-gateway" --grpc-gateway_out=logtostderr=true:. $1
+        "protoc" -I. -I api -I "${GOOGLE_PB_PKG_PATH}/googleapis" -I api/third_party --plugin=protoc-gen-grpc-gateway="${BIN_DIR}/protoc-gen-grpc-gateway" --grpc-gateway_out=logtostderr=true:. $1
         echo "    [3/4] Generate validator"
-        "${BIN_DIR}/protoc" -I. -I api -I "${GOOGLE_PB_PKG_PATH}/googleapis" -I api/third_party --plugin=protoc-gen-validate="${BIN_DIR}/protoc-gen-validate" --validate_out=lang=go:. $1
+        "protoc" -I. -I api -I "${GOOGLE_PB_PKG_PATH}/googleapis" -I api/third_party --plugin=protoc-gen-validate="${BIN_DIR}/protoc-gen-validate" --validate_out=lang=go:. $1
         echo "    [4/4] Compile swagger file at $1"
-        "${BIN_DIR}/protoc" -I. -I api -I "${GOOGLE_PB_PKG_PATH}/googleapis" -I api/third_party --plugin=protoc-gen-openapiv2="${BIN_DIR}/protoc-gen-openapiv2" --openapiv2_out=logtostderr=true:. --openapiv2_opt=json_names_for_fields=false $1
+        "protoc" -I. -I api -I "${GOOGLE_PB_PKG_PATH}/googleapis" -I api/third_party --plugin=protoc-gen-openapiv2="${BIN_DIR}/protoc-gen-openapiv2" --openapiv2_out=logtostderr=true:. --openapiv2_opt=json_names_for_fields=false $1
     fi
 }
 
@@ -76,14 +76,14 @@ function read_proto_dir_and_generate() {
 if [[ -z "${build_env}" || "${build_env}" == "local" ]]; then
     echo "[Using tools in PATH of local machine]"
 
-    bash "${CODE_PATH}/build/protoc_install.sh" -e local
+    # bash "${CODE_PATH}/build/protoc_install.sh" -e local
     bash "${CODE_PATH}/build/addons_install.sh" -e local
 
     read_proto_dir_and_generate $PROTOFILE_DIR
 elif [[ "${build_env}" == "project" ]]; then
     echo "[Using tools in project bin: ${BIN_DIR}]"
 
-    bash "${CODE_PATH}/build/protoc_install.sh" -e project
+    # bash "${CODE_PATH}/build/protoc_install.sh" -e project
     bash "${CODE_PATH}/build/addons_install.sh" -e project
 
     read_proto_dir_and_generate $PROTOFILE_DIR

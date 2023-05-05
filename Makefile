@@ -46,7 +46,7 @@ tools:
 	GO111MODULE=on go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 
 .PHONY: git-hooks
-git-hooks: tools
+git-hooks:
 	@echo "Copy git hooks"
 	@find .git/hooks -type l -exec rm {} \;
 	@find .githooks -type f -exec ln -sf ../../{} .git/hooks/ \;
