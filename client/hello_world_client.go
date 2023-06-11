@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/brickzzhang/grpc-helloworld/apigen/hello"
+	"google.golang.org/protobuf/types/known/fieldmaskpb"
 )
 
 // HelloWorldClient helloworld client
@@ -122,5 +123,30 @@ func (c *HelloWorldClient) Chatter2Chatter(ctx context.Context) error {
 	}()
 
 	wg.Wait()
+	return nil
+}
+
+// FieldmaskTest api
+func (c *HelloWorldClient) FieldmaskTest(ctx context.Context) error {
+	cc := c.Client
+	req := &hello.FieldmaskTestReq{
+		Msg: "test msg",
+		Nested: &hello.Nested{
+			Attr1: "attr1",
+		},
+	}
+	fm, err := fieldmaskpb.New(req, "msg")
+	if err != nil {
+		log.Printf("construct field_mask error: %+v", err)
+		return err
+	}
+	req.FieldMask = fm
+	res, err := cc.FieldmaskTest(ctx, req)
+	if err != nil {
+		log.Printf("invoke error: %+v", err)
+		return err
+	}
+
+	log.Printf("res: %+v", res)
 	return nil
 }

@@ -8,11 +8,12 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.1-0.20190118093823-f849b5445de4
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
+	github.com/mennanov/fieldmask-utils v1.0.0
 	github.com/prometheus/client_golang v1.15.1
 	github.com/spf13/viper v1.7.1
 	go.uber.org/zap v1.17.0
-	google.golang.org/genproto v0.0.0-20210602131652-f16073e35f0c
-	google.golang.org/grpc v1.38.0
+	google.golang.org/genproto v0.0.0-20220531173845-685668d2de03
+	google.golang.org/grpc v1.46.2
 	google.golang.org/protobuf v1.30.0
 )
 
@@ -26,6 +27,7 @@ require (
 	github.com/mitchellh/mapstructure v1.1.2 // indirect
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
 	github.com/pelletier/go-toml v1.2.0 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_model v0.3.0 // indirect
 	github.com/prometheus/common v0.42.0 // indirect
 	github.com/prometheus/procfs v0.9.0 // indirect

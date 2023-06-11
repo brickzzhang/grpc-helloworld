@@ -3,99 +3,145 @@ syntax = "proto3";
 package helloworld;
 
 import "google/api/annotations.proto";
+import "google/protobuf/field_mask.proto";
 
 option go_package = "github.com/brickzzhang/grpc-helloworld/apigen/hello;hello";
 
 // HelloWorldService a hello world demo
 service HelloWorldService {
-    // SayHello Sends a greeting
-    rpc SayHello(SayHelloRequest) returns (SayHelloResponse) {
-        option (google.api.http) = {
-            post: "/v1/helloworld"
-            body: "*"
-        };
-    }
+  // GetTest test req body with get method
+  rpc GetTest(GetTestReq) returns (GetTestRes) {
+    option (google.api.http) = {
+      get: "/v1/get-test"
+    };
+  }
 
-    // HelloChatter response to client continuously
-    rpc HelloChatter(HelloChatterRequest)
-        returns (stream HelloChatterResponse) {
-        option (google.api.http) = {
-            post: "/v1/helloworld:hello_chatter"
-            body: "*"
-        };
-    }
+  // SayHello Sends a greeting
+  rpc SayHello(SayHelloRequest) returns (SayHelloResponse) {
+    option (google.api.http) = {
+      post: "/v1/helloworld"
+      body: "*"
+    };
+  }
 
-    // Chatter2Hello request continuously
-    rpc Chatter2Hello(stream Chatter2HelloRequest)
-        returns (Chatter2HelloResponse) {
-        option (google.api.http) = {
-            post: "/v1/helloworld:chatter_talk"
-            body: "*"
-        };
-    }
+  // HelloChatter response to client continuously
+  rpc HelloChatter(HelloChatterRequest) returns (stream HelloChatterResponse) {
+    option (google.api.http) = {
+      post: "/v1/helloworld:hello_chatter"
+      body: "*"
+    };
+  }
 
-    // Chatter2Chatter request continuously
-    rpc Chatter2Chatter(stream Chatter2ChatterRequest)
-        returns (stream Chatter2ChatterResponse) {
-        option (google.api.http) = {
-            post: "/v1/helloworld:chatter_chatter"
-            body: "*"
-        };
-    }
+  // Chatter2Hello request continuously
+  rpc Chatter2Hello(stream Chatter2HelloRequest)
+      returns (Chatter2HelloResponse) {
+    option (google.api.http) = {
+      post: "/v1/helloworld:chatter_talk"
+      body: "*"
+    };
+  }
+
+  // Chatter2Chatter request continuously
+  rpc Chatter2Chatter(stream Chatter2ChatterRequest)
+      returns (stream Chatter2ChatterResponse) {
+    option (google.api.http) = {
+      post: "/v1/helloworld:chatter_chatter"
+      body: "*"
+    };
+  }
+
+  rpc FieldmaskTest(FieldmaskTestReq) returns (FieldmaskTestRes) {
+    option (google.api.http) = {
+      post: "/v1/fieldmasktest"
+      body: "nested"
+      additional_bindings { patch: "/v1/fieldmasktest" body: "nested" }
+    };
+  }
+
+  rpc FieldmaskTestWithBodyStar(FieldmaskTestReq) returns (FieldmaskTestRes) {
+    option (google.api.http) = {
+      post: "/v1/fieldmasktestwithbodystar"
+      body: "*"
+    };
+  }
 }
 
 // SayHelloRequest The request of SayHello api
 message SayHelloRequest {
-    // message greeting message
-    string message = 1;
+  // message greeting message
+  string message = 1;
 }
 
 // SayHelloResponse The response of SayHello api
 message SayHelloResponse {
-    // message greeting message
-    string message = 1;
+  // message greeting message
+  string message = 1;
 }
 
 // HelloChatterRequest trigger chat channel
 message HelloChatterRequest {
-    // message anything is ok
-    string message = 1;
+  // message anything is ok
+  string message = 1;
 }
 
 // HelloChatterResponse response message
 message HelloChatterResponse {
-    // seq number
-    int32 seq = 1;
-    // message response message
-    string message = 2;
+  // seq number
+  int32 seq = 1;
+  // message response message
+  string message = 2;
 }
 
 // Chatter2HelloRequest request message
 message Chatter2HelloRequest {
-    // seq number
-    int32 seq = 1;
-    // message request message
-    string message = 2;
+  // seq number
+  int32 seq = 1;
+  // message request message
+  string message = 2;
 }
 
 // Chatter2HelloResponse request message
 message Chatter2HelloResponse {
-    // total segment received
-    int32 total = 1;
+  // total segment received
+  int32 total = 1;
 }
 
 // Chatter2ChatterRequest request message
 message Chatter2ChatterRequest {
-    // seq number
-    int32 seq = 1;
-    // message request message
-    string message = 2;
+  // seq number
+  int32 seq = 1;
+  // message request message
+  string message = 2;
 }
 
 // Chatter2ChatterResponse response message
 message Chatter2ChatterResponse {
-    // seq number
-    int32 seq = 1;
-    // message response message
-    string message = 2;
+  // seq number
+  int32 seq = 1;
+  // message response message
+  string message = 2;
+}
+
+message GetTestReq {
+  string msg = 1;
+}
+
+message GetTestRes {
+  string msg = 1;
+}
+
+message Nested {
+  string attr1 = 1;
+  string attr2 = 2;
+}
+
+message FieldmaskTestReq {
+  string msg = 1;
+  Nested nested = 2;
+  google.protobuf.FieldMask field_mask = 3;
+}
+
+message FieldmaskTestRes {
+  string msg = 1;
+  Nested nested = 2;
 }

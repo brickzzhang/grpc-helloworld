@@ -9,8 +9,10 @@ import (
 	"github.com/brickzzhang/grpc-helloworld/apigen/hello"
 	"github.com/brickzzhang/grpc-helloworld/workshop/configger"
 	"github.com/brickzzhang/grpc-helloworld/workshop/logger"
+
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 )
 
 func main() {
@@ -42,6 +44,10 @@ func main() {
 
 	// invoke SayHello
 	log.Printf("### ready to invoke SayHello ###\n")
+	ctx = context.WithValue(ctx, "before_invoke", "bzz")
+	header := metadata.New(map[string]string{"hello": "world"})
+	header = metadata.Pairs("hello", "bzz")
+	ctx = metadata.NewOutgoingContext(ctx, header)
 	if err := client.SayHello(ctx, &hello.SayHelloRequest{
 		Message: "hello world",
 	}); err != nil {
@@ -72,6 +78,14 @@ func main() {
 	log.Printf("### ready to invoke Chatter2Chatter ###\n")
 	if err := client.Chatter2Chatter(ctx); err != nil {
 		logger.Error(ctx, "Chatter2Chatter", zap.Error(err))
+		return
+	}
+	log.Printf("\n\n")
+
+	// invoke with MaskField
+	log.Printf("### ready to invoke Chatter2Hello ###\n")
+	if err := client.FieldmaskTest(ctx); err != nil {
+		logger.Error(ctx, "Chatter2Hello", zap.Error(err))
 		return
 	}
 	log.Printf("\n\n")

@@ -20,6 +20,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 
 	hello "github.com/brickzzhang/grpc-helloworld/apigen/hello"
 	"github.com/brickzzhang/grpc-helloworld/internal/service"
@@ -119,6 +120,9 @@ func startServer(ctx context.Context) (err error) {
 	registerGRPCRegFunc(s,
 		registerHelloWorldService,
 	)
+
+	// todo: debug mode.
+	reflection.Register(s)
 
 	// Serve gRPC server
 	logger.Info(ctx, fmt.Sprintf("Serving gRPC on localhost:%s", port.(string)))
