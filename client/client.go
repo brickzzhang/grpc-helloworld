@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/brickzzhang/grpc-helloworld/apigen/hello"
 	"github.com/brickzzhang/grpc-helloworld/workshop/configger"
@@ -48,6 +49,12 @@ func main() {
 	header := metadata.New(map[string]string{"hello": "world"})
 	header = metadata.Pairs("hello", "bzz")
 	ctx = metadata.NewOutgoingContext(ctx, header)
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	// ctx, cancel := context.WithCancel(ctx)
+	go func() {
+		time.Sleep(1 * time.Second)
+		cancel()
+	}()
 	if err := client.SayHello(ctx, &hello.SayHelloRequest{
 		Message: "hello world",
 	}); err != nil {

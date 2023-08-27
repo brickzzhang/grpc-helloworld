@@ -26,6 +26,11 @@ func NewHelloWorldService() *HelloWorldService {
 	return service
 }
 
+func doSomething(somethingDone chan<- struct{}) {
+	time.Sleep(10 * time.Second)
+	somethingDone <- struct{}{}
+}
+
 // SayHello echo nil
 func (s *HelloWorldService) SayHello(
 	ctx context.Context, r *hello.SayHelloRequest,
@@ -33,6 +38,23 @@ func (s *HelloWorldService) SayHello(
 	if v, ok := interceptor.ExtractMetadata(ctx, interceptor.NewKey); ok {
 		log.Printf("value injected into the header: %+v", v)
 	}
+	if ddl, ok := ctx.Deadline(); ok {
+		log.Printf("deadline set: %+v", ddl)
+	}
+	somethingDone := make(chan struct{})
+	go doSomething(somethingDone)
+	// set timeout to 2 seconds on client side
+	for {
+		select {
+		case <-ctx.Done():
+			log.Printf("!!! context cancel")
+			return nil, ctx.Err()
+		case <-somethingDone:
+			goto after
+		default:
+		}
+	}
+after:
 	return &hello.SayHelloResponse{Message: r.Message}, nil
 }
 
